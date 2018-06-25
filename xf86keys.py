@@ -12,8 +12,9 @@ def main():
     # Description and variables
     about = """A client to control both MPRIS and MPD playbacks.
             Made this to control keybinds of media keys"""
-    helpmsg = """Play the music from either
-              MPRIS or MPD which ever was played last"""
+    helpmsg = """
+    Play the music from either
+    MPRIS or MPD which ever was played last"""
 
     class XFKeysMpd():
         """ The instance for controlling the mpd player"""
@@ -27,22 +28,34 @@ def main():
 
         def play(self):
             """ Play the song """
-#            self.client.play()
+            self.client.play()
 
         def pause(self):
             """Pause the song """
-            pass
+            self.client.pause()
 
-    # Parse args
-    parser = argparse.ArgumentParser(
-        description=about)
-    parser.add_argument('play', nargs='?', help=helpmsg)
-    parser.add_argument('pause', nargs='?', help=helpmsg)
-    args = parser.parse_args(sys.argv[1:])
-    print(args)
+        def stop(self):
+            """"Stop the song"""
+            self.client.stop()
 
-    client_mpd = XFKeysMpd('localhost', 6600, 10, None)
-    client_mpd.play()
+        def toggle(self):
+            """Toggle play or pause"""
+            self.client.pause()
+    mpd_client = XFKeysMpd('localhost', 6600, 10, None)
+    mpd_client.play()
+
+    if len(sys.argv) <= 1:
+        sys.argv.append('help')
+    if sys.argv[1] == 'play':
+        mpd_client.play()
+    elif sys.argv[1] == 'pause':
+        mpd_client.pause()
+    elif sys.argv[1] == 'stop':
+        mpd_client.stop()
+    elif sys.argv[1] == 'toggle':
+        mpd_client.toggle()
+    elif sys.argv[1] == 'help':
+        print(helpmsg)
 
 
 if __name__ == '__main__':
