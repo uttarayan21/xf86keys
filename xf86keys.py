@@ -139,12 +139,7 @@ def read_config(config_path):
 
 def main():
     """ executed when called as __init__ """
-    # Description and variables
-    # about = """A client to control both MPRIS and MPD playbacks.
-    #         Made this to control keybinds of media keys"""
-    # helpmsg = """
-    # Play the music from either
-    # MPRIS or MPD which ever was played last"""
+
     config_path = os.path.expanduser('~') + '/.config/xf86keys.conf'
 
     try:
@@ -157,13 +152,12 @@ def main():
     except NameError:
         log_it('Unkown Error: Please open a issue in the github repo')
 
-    if mpd_client.is_playing():
-        client = mpd_client
-    else:
-        client = mpris_client
-
     def call_func(call_key):
         """Dictionary to call functions"""
+        if mpd_client.is_playing():
+            client = mpd_client
+        else:
+            client = mpris_client
         key_event_map = {
             keyboard.KeyCode.from_vk(xf86_play): client.toggle,
             keyboard.KeyCode.from_vk(xf86_stop): client.stop,
@@ -175,6 +169,7 @@ def main():
 
     def on_press(key):
         """Call the dictionary on any key press"""
+
         call_func(key)()
     with keyboard.Listener(on_press=on_press) as listener:
         listener.join()
