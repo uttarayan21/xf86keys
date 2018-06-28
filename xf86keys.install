@@ -1,0 +1,8 @@
+post_install () {
+	echo "You have to add 'exec --no-startup-id xf86keys' to ~/.config/i3/config to use it with i3"
+  echo "Or start it from config file of your DE"
+}
+
+post_remove () {
+	echo "Please remove 'exec --no-startup-id xf86keys' from your DE config file"
+}
