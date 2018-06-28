@@ -17,7 +17,7 @@ Version: 1
 
 # How to install:
 
-* If using archlinux
+* ## _ArchLinux_
 ```sudo pacman -S python3 python-mpd2 python-dbus```
 for pynput you can get it from aur or pip
 
@@ -32,7 +32,7 @@ or from pip
 ```sudo pip install pynput```
 
 
-* Other distributions
+* ## _Other distributions_
 If your package manager has the packages get from there or from pip
 
 ```sudo pip install dbus-python python-mpd2 pynput```
