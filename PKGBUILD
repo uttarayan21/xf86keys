@@ -6,9 +6,9 @@
 # Maintainer: Your Name <uttarayan21@gmail.com>
 pkgname=xf86keys
 pkgver=v1.0
-pkgrel=1
+pkgrel=2
 epoch=
-pkgdesc="Control Both MPD MPRIS2 music players"
+pkgdesc="keybinds both MPD MPRIS2 music players"
 arch=('any')
 url="https://github.com/uttarayan21/xf86keys"
 license=('GPL')
@@ -24,9 +24,9 @@ backup=()
 options=()
 install=${pkgname}.install
 changelog=
-source=("${pkgname}-${pkgver}.tar.gz::https://codeload.github.com/uttarayan21/${pkgname}/tar.gz/${pkgver}")
+source=("${pkgname}::git+git://github.com/uttarayan21/xf86keys.git")
 noextract=()
-md5sums=('e68116928caf5487e1243e8d11a236c0')
+md5sums=('SKIP')
 validpgpkeys=()
 
 # prepare() {
@@ -43,13 +43,7 @@ validpgpkeys=()
 # }
 
 package() {
-  echo $srcdir
-  echo $pkgdir
-	cd "${srcdir}"
-	# make DESTDIR="$pkgdir/" install
-  echo "Extracting ${pkgname}-${pkgver}.tar.gz"
-  tar -vxf ${pkgname}-${pkgver}.tar.gz
-  install -Dm755 "${srcdir}/${pkgname}-1.0/xf86keys.py" "${pkgdir}/usr/bin/xf86keys"
-	install -Dm644 "${srcdir}/${pkgname}-1.0/LICENSE" "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+  install -Dm755 "${srcdir}/${pkgname}/xf86keys.py" "${pkgdir}/usr/bin/xf86keys"
+	install -Dm644 "${srcdir}/${pkgname}/LICENSE" "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
 
 }

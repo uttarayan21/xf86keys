@@ -7,22 +7,31 @@ import sys
 import signal
 import re
 from configparser import ConfigParser
+import mpd
 import dbus
 from pynput import keyboard
-from mpd import MPDClient
 
 xf86_play = 269025044
 xf86_stop = 269025045
 xf86_prev = 269025046
 xf86_next = 269025047
 
+
 def signal_handler(signum, frame):
+    """SIgnal Handler"""
+    if signum == signal.SIGINT:
+        log_it('\nSIGINT Interrupt recieved... Exitting...')
+        raise SystemExit
     log_it('\nInterrupted...')
     log_it('\nContinuing...')
+
+
 signal.signal(signal.SIGINT, signal_handler)
 signal.signal(signal.SIGTERM, signal_handler)
 
+
 def log_it(string):
+    """Show messages to tty if run from terminal or store them to logfile"""
     log_file = os.path.expanduser('~') + '/.cache/xf86keys.log'
     if sys.stdin.isatty():
         print(string + '\n')
@@ -34,29 +43,42 @@ def log_it(string):
 def true():
     """Always returns true"""
     return True
+
+
 class XFKeysMpris():
     """Instance for MPRIS2"""
+
     def __init__(self):
         self.bus = dbus.SessionBus()
+
     def get_player(self):
         """Check the name of the player running"""
         for service in self.bus.list_names():
             if re.match('org.mpris.MediaPlayer2.', service):
                 player = dbus.SessionBus().get_object(service, '/org/mpris/MediaPlayer2')
                 interface = dbus.Interface(player, dbus_interface='org.mpris.MediaPlayer2.Player')
-                return interface
+                break
         else:
-            return False
+            return None
+        return interface
+
     def toggle(self):
+        """Toggle mpris play or pause"""
         if self.get_player():
             self.get_player().PlayPause()
+
     def stop(self):
+        """Stop mpris play"""
         if self.get_player():
             self.get_player().Stop()
+
     def prev(self):
+        """Play previous song mpris"""
         if self.get_player():
             self.get_player().Previous()
+
     def next(self):
+        """Play next song mpris"""
         if self.get_player():
             self.get_player().Next()
 
@@ -66,7 +88,7 @@ class XFKeysMpd():
 
     def __init__(self, host, port, timeout, idletimeout):
 
-        self.client = MPDClient()
+        self.client = mpd.MPDClient()
         self.client.timeout = timeout
         self.client.idletimeout = idletimeout
         try:
