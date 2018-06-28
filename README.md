@@ -20,12 +20,19 @@ Version: 1
 * If using archlinux
 ```sudo pacman -S python3 python-mpd2 python-dbus```
 for pynput you can get it from aur or pip
+
 ```git clone https://aur.archlinux.org/python-pynput```
+
 ```cd python-pynput```
+
 ```makepkg -si```
+
 or from pip
+
 ```sudo pip install pynput```
+
 
 * Other distributions
 If your package manager has the packages get from there or from pip
+
 ```sudo pip install dbus-python python-mpd2 pynput```
