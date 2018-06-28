@@ -135,6 +135,7 @@ class XFKeysMpd():
         return True
 
 def read_config(config_path):
+    """Read the config file and return mpd host and port"""
     host = 'localhost'
     port = 6600
     timeout = 10
