@@ -7,7 +7,6 @@ from configparser import ConfigParser
 from pynput import keyboard
 from mpd import MPDClient
 
-
 def main():
     """ executed when called as __init__ """
     # Description and variables
