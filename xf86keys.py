@@ -5,7 +5,9 @@
 import os
 import sys
 import signal
+import re
 from configparser import ConfigParser
+import dbus
 from pynput import keyboard
 from mpd import MPDClient
 
@@ -14,10 +16,11 @@ xf86_stop = 269025045
 xf86_prev = 269025046
 xf86_next = 269025047
 
-def signal_handler(signal, frame):
+def signal_handler(signum, frame):
     log_it('\nInterrupted...')
-    raise SystemExit
+    log_it('\nContinuing...')
 signal.signal(signal.SIGINT, signal_handler)
+signal.signal(signal.SIGTERM, signal_handler)
 
 def log_it(string):
     log_file = os.path.expanduser('~') + '/.cache/xf86keys.log'
@@ -31,6 +34,31 @@ def log_it(string):
 def true():
     """Always returns true"""
     return True
+class XFKeysMpris():
+    """Instance for MPRIS2"""
+    def __init__(self):
+        self.bus = dbus.SessionBus()
+    def get_player(self):
+        """Check the name of the player running"""
+        for service in self.bus.list_names():
+            if re.match('org.mpris.MediaPlayer2.', service):
+                player = dbus.SessionBus().get_object(service, '/org/mpris/MediaPlayer2')
+                interface = dbus.Interface(player, dbus_interface='org.mpris.MediaPlayer2.Player')
+                return interface
+        else:
+            return False
+    def toggle(self):
+        if self.get_player():
+            self.get_player().PlayPause()
+    def stop(self):
+        if self.get_player():
+            self.get_player().Stop()
+    def prev(self):
+        if self.get_player():
+            self.get_player().Previous()
+    def next(self):
+        if self.get_player():
+            self.get_player().Next()
 
 
 class XFKeysMpd():
@@ -55,7 +83,7 @@ class XFKeysMpd():
 
     def pause(self):
         """Pause the song """
-        # self.client.pause()
+        self.client.pause()
 
     def stop(self):
         """"Stop the song"""
@@ -124,16 +152,23 @@ def main():
         mpd_client = XFKeysMpd(*read_config(config_path))
     except NameError:
         log_it('Unkown Error: Please check the config file')
+    try:
+        mpris_client = XFKeysMpris()
+    except NameError:
+        log_it('Unkown Error: Please open a issue in the github repo')
 
+    if mpd_client.is_playing():
+        client = mpd_client
+    else:
+        client = mpris_client
 
     def call_func(call_key):
         """Dictionary to call functions"""
         key_event_map = {
-            keyboard.KeyCode.from_vk(xf86_play): mpd_client.toggle,
-            keyboard.KeyCode.from_vk(xf86_stop): mpd_client.stop,
-            keyboard.KeyCode.from_vk(xf86_next): mpd_client.next,
-            keyboard.KeyCode.from_vk(xf86_prev): mpd_client.prev,
-
+            keyboard.KeyCode.from_vk(xf86_play): client.toggle,
+            keyboard.KeyCode.from_vk(xf86_stop): client.stop,
+            keyboard.KeyCode.from_vk(xf86_next): client.next,
+            keyboard.KeyCode.from_vk(xf86_prev): client.prev,
         }
         return key_event_map.get(call_key, true)
 
@@ -141,8 +176,7 @@ def main():
     def on_press(key):
         """Call the dictionary on any key press"""
         call_func(key)()
-    with keyboard.Listener(
-        on_press=on_press) as listener:
+    with keyboard.Listener(on_press=on_press) as listener:
         listener.join()
 
 
