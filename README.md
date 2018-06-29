@@ -8,7 +8,9 @@ Plannig to use python-dbus for the mpris
 
 For keyboard mapping it uses python-pynput
 
-Version: 1
+# Bugs/?Features :
+* ~The mpd client connection dies out on a long wait~
+	I think it's fixed now (Check for the connection to mpd before any command)
 
 # To do :
 * ~argparse ... stuff~ FML ... I am a NOOB, Can't do this ... yet
@@ -17,7 +19,8 @@ Version: 1
 
 # How to install:
 
-* ## _ArchLinux_
+* ## *ArchLinux*
+
 ```sudo pacman -S python3 python-mpd2 python-dbus```
 for pynput you can get it from aur or pip
 
@@ -26,6 +29,8 @@ for pynput you can get it from aur or pip
 ```cd python-pynput```
 
 ```makepkg -si```
+
+Added PKGBUILD for arch but you need to install python-pynput from aur first
 
 or from pip
 

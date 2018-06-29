@@ -7,56 +7,83 @@ import sys
 import signal
 import re
 from configparser import ConfigParser
+import mpd
 import dbus
 from pynput import keyboard
-from mpd import MPDClient
+import datetime
 
 xf86_play = 269025044
 xf86_stop = 269025045
 xf86_prev = 269025046
 xf86_next = 269025047
 
+
 def signal_handler(signum, frame):
+    """SIgnal Handler"""
+    if signum == signal.SIGINT:
+        log_it('\nSIGINT Interrupt recieved... Exitting...')
+        raise SystemExit
     log_it('\nInterrupted...')
     log_it('\nContinuing...')
+
+
 signal.signal(signal.SIGINT, signal_handler)
 signal.signal(signal.SIGTERM, signal_handler)
 
+
 def log_it(string):
+    """Show messages to tty if run from terminal or store them to logfile"""
     log_file = os.path.expanduser('~') + '/.cache/xf86keys.log'
+    readable_timestamp = datetime.datetime.fromtimestamp(
+        1530238401).isoformat()
     if sys.stdin.isatty():
-        print(string + '\n')
+        print(readable_timestamp + ' ' + string + '\n')
     else:
         with open(log_file, 'a+') as log:
-            log.write(string + '\n')
+            log.write(readable_timestamp + ' ' + string + '\n')
 
 
 def true():
     """Always returns true"""
     return True
+
+
 class XFKeysMpris():
     """Instance for MPRIS2"""
+
     def __init__(self):
         self.bus = dbus.SessionBus()
+
     def get_player(self):
         """Check the name of the player running"""
         for service in self.bus.list_names():
             if re.match('org.mpris.MediaPlayer2.', service):
-                player = dbus.SessionBus().get_object(service, '/org/mpris/MediaPlayer2')
-                interface = dbus.Interface(player, dbus_interface='org.mpris.MediaPlayer2.Player')
-                return interface
+                player = dbus.SessionBus().get_object(
+                    service, '/org/mpris/MediaPlayer2')
+                interface = dbus.Interface(
+                    player, dbus_interface='org.mpris.MediaPlayer2.Player')
+                break
         else:
-            return False
+            return None
+        return interface
+
     def toggle(self):
+        """Toggle mpris play or pause"""
         if self.get_player():
             self.get_player().PlayPause()
+
     def stop(self):
+        """Stop mpris play"""
         if self.get_player():
             self.get_player().Stop()
+
     def prev(self):
+        """Play previous song mpris"""
         if self.get_player():
             self.get_player().Previous()
+
     def next(self):
+        """Play next song mpris"""
         if self.get_player():
             self.get_player().Next()
 
@@ -65,8 +92,7 @@ class XFKeysMpd():
     """ The instance for controlling the mpd player"""
 
     def __init__(self, host, port, timeout, idletimeout):
-
-        self.client = MPDClient()
+        self.client = mpd.MPDClient()
         self.client.timeout = timeout
         self.client.idletimeout = idletimeout
         try:
@@ -76,6 +102,25 @@ class XFKeysMpd():
             log_it(' If you run mpd server in other than {}:{} \
                 then please edit the config file'.format(host, port))
             raise SystemExit
+
+    def check_connect(self, host, port):
+        """Check the connection and re establish if disconnected"""
+        # self.client.disconnect()
+        try:
+            self.client.ping()
+        except mpd.base.ConnectionError:
+            log_it('ConnectionError ocurred')
+            try:
+                self.client.disconnect()
+            except mpd.base.ConnectionError:
+                log_it('Trying to disconnect')
+                log_it('Disconnect failed')
+            try:
+                log_it('Trying to Reconnect')
+                self.client.connect(host, port)
+            except ConnectionRefusedError:
+                log_it("Connection Refused")
+                raise SystemExit('Connection Refused')
 
     def play(self):
         """ Play the song """
@@ -112,7 +157,9 @@ class XFKeysMpd():
             return False
         return True
 
+
 def read_config(config_path):
+    """Read the config file and return mpd host and port"""
     host = 'localhost'
     port = 6600
     timeout = 10
@@ -137,6 +184,7 @@ def read_config(config_path):
 
     return [host, port, timeout, idletimeout]
 
+
 def main():
     """ executed when called as __init__ """
 
@@ -154,6 +202,8 @@ def main():
 
     def call_func(call_key):
         """Dictionary to call functions"""
+        mpd_client.check_connect(*read_config(config_path)[0:2])
+        # print(*read_config(config_path)[0:2])
         if mpd_client.is_playing():
             client = mpd_client
         else:
@@ -165,7 +215,6 @@ def main():
             keyboard.KeyCode.from_vk(xf86_prev): client.prev,
         }
         return key_event_map.get(call_key, true)
-
 
     def on_press(key):
         """Call the dictionary on any key press"""
