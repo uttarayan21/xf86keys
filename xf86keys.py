@@ -203,7 +203,7 @@ def main():
     def call_func(call_key):
         """Dictionary to call functions"""
         mpd_client.check_connect(*read_config(config_path)[0:2])
-        print(*read_config(config_path)[0:2])
+        # print(*read_config(config_path)[0:2])
         if mpd_client.is_playing():
             client = mpd_client
         else:

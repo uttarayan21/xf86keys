@@ -6,7 +6,7 @@
 # Maintainer: Your Name <uttarayan21@gmail.com>
 pkgname=xf86keys
 pkgver=v1.0
-pkgrel=2
+pkgrel=3
 epoch=
 pkgdesc="keybinds both MPD MPRIS2 music players"
 arch=('any')
