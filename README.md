@@ -9,7 +9,8 @@ Plannig to use python-dbus for the mpris
 For keyboard mapping it uses python-pynput
 
 # Bugs/?Features :
-* The mpd client connection dies out on a long wait
+* ~The mpd client connection dies out on a long wait~
+	I think it's fixed now (Check for the connection to mpd before any command)
 
 # To do :
 * ~argparse ... stuff~ FML ... I am a NOOB, Can't do this ... yet

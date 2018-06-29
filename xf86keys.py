@@ -10,6 +10,7 @@ from configparser import ConfigParser
 import mpd
 import dbus
 from pynput import keyboard
+import datetime
 
 xf86_play = 269025044
 xf86_stop = 269025045
@@ -33,11 +34,12 @@ signal.signal(signal.SIGTERM, signal_handler)
 def log_it(string):
     """Show messages to tty if run from terminal or store them to logfile"""
     log_file = os.path.expanduser('~') + '/.cache/xf86keys.log'
+    readable_timestamp = datetime.datetime.fromtimestamp(1530238401).isoformat()
     if sys.stdin.isatty():
-        print(string + '\n')
+        print(readable_timestamp + string + '\n')
     else:
         with open(log_file, 'a+') as log:
-            log.write(string + '\n')
+            log.write(readable_timestamp + string + '\n')
 
 
 def true():
@@ -87,7 +89,6 @@ class XFKeysMpd():
     """ The instance for controlling the mpd player"""
 
     def __init__(self, host, port, timeout, idletimeout):
-
         self.client = mpd.MPDClient()
         self.client.timeout = timeout
         self.client.idletimeout = idletimeout
@@ -98,6 +99,23 @@ class XFKeysMpd():
             log_it(' If you run mpd server in other than {}:{} \
                 then please edit the config file'.format(host, port))
             raise SystemExit
+
+    def check_connect(self, host, port):
+        """Check the connection and re establish if disconnected"""
+        try:
+            self.client.ping()
+        except (ConnectionError, OSError):
+            log_it('ConnectionError ocurred')
+            try:
+                log_it('Trying to disconnect')
+                self.client.disconnect()
+            except ConnectionError:
+                log_it('Disconnect failed')
+            try:
+                log_it('Trying to Reconnect')
+                self.client.connect(host, port)
+            except ConnectionRefusedError:
+                log_it("Re-Connection Refused")
 
     def play(self):
         """ Play the song """
@@ -177,6 +195,8 @@ def main():
 
     def call_func(call_key):
         """Dictionary to call functions"""
+        mpd_client.check_connect(*read_config(config_path)[0:2])
+        print(*read_config(config_path)[0:2])
         if mpd_client.is_playing():
             client = mpd_client
         else:
