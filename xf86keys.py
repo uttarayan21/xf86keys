@@ -34,12 +34,13 @@ signal.signal(signal.SIGTERM, signal_handler)
 def log_it(string):
     """Show messages to tty if run from terminal or store them to logfile"""
     log_file = os.path.expanduser('~') + '/.cache/xf86keys.log'
-    readable_timestamp = datetime.datetime.fromtimestamp(1530238401).isoformat()
+    readable_timestamp = datetime.datetime.fromtimestamp(
+        1530238401).isoformat()
     if sys.stdin.isatty():
-        print(readable_timestamp + string + '\n')
+        print(readable_timestamp + ' ' + string + '\n')
     else:
         with open(log_file, 'a+') as log:
-            log.write(readable_timestamp + string + '\n')
+            log.write(readable_timestamp + ' ' + string + '\n')
 
 
 def true():
@@ -57,8 +58,10 @@ class XFKeysMpris():
         """Check the name of the player running"""
         for service in self.bus.list_names():
             if re.match('org.mpris.MediaPlayer2.', service):
-                player = dbus.SessionBus().get_object(service, '/org/mpris/MediaPlayer2')
-                interface = dbus.Interface(player, dbus_interface='org.mpris.MediaPlayer2.Player')
+                player = dbus.SessionBus().get_object(
+                    service, '/org/mpris/MediaPlayer2')
+                interface = dbus.Interface(
+                    player, dbus_interface='org.mpris.MediaPlayer2.Player')
                 break
         else:
             return None
@@ -102,20 +105,22 @@ class XFKeysMpd():
 
     def check_connect(self, host, port):
         """Check the connection and re establish if disconnected"""
+        # self.client.disconnect()
         try:
             self.client.ping()
-        except (ConnectionError, OSError):
+        except mpd.base.ConnectionError:
             log_it('ConnectionError ocurred')
             try:
-                log_it('Trying to disconnect')
                 self.client.disconnect()
-            except ConnectionError:
+            except mpd.base.ConnectionError:
+                log_it('Trying to disconnect')
                 log_it('Disconnect failed')
             try:
                 log_it('Trying to Reconnect')
                 self.client.connect(host, port)
             except ConnectionRefusedError:
-                log_it("Re-Connection Refused")
+                log_it("Connection Refused")
+                raise SystemExit('Connection Refused')
 
     def play(self):
         """ Play the song """
@@ -152,6 +157,7 @@ class XFKeysMpd():
             return False
         return True
 
+
 def read_config(config_path):
     """Read the config file and return mpd host and port"""
     host = 'localhost'
@@ -177,6 +183,7 @@ def read_config(config_path):
         log_it('Port couldn\'t be read from config')
 
     return [host, port, timeout, idletimeout]
+
 
 def main():
     """ executed when called as __init__ """
@@ -208,7 +215,6 @@ def main():
             keyboard.KeyCode.from_vk(xf86_prev): client.prev,
         }
         return key_event_map.get(call_key, true)
-
 
     def on_press(key):
         """Call the dictionary on any key press"""
