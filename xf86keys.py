@@ -105,7 +105,6 @@ class XFKeysMpd():
 
     def check_connect(self, host, port):
         """Check the connection and re establish if disconnected"""
-        # self.client.disconnect()
         try:
             self.client.ping()
         except mpd.base.ConnectionError:
@@ -191,7 +190,6 @@ def main():
     config_path = os.path.expanduser('~') + '/.config/xf86keys.conf'
 
     try:
-        # mpd_client = XFKeysMpd(host, port, 10, None)
         mpd_client = XFKeysMpd(*read_config(config_path))
     except NameError:
         log_it('Unkown Error: Please check the config file')
@@ -218,8 +216,12 @@ def main():
 
     def on_press(key):
         """Call the dictionary on any key press"""
+        try:
+            if not key.char:
+                call_func(key)()
+        except AttributeError:
+            pass
 
-        call_func(key)()
     with keyboard.Listener(on_press=on_press) as listener:
         listener.join()
 
