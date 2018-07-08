@@ -24,7 +24,7 @@ def signal_handler(signum, frame):
         log_it('\nSIGINT Interrupt recieved... Exitting...')
         raise SystemExit
     log_it('\nInterrupted...')
-    log_it('\nContinuing...')
+    log_it('\nPlease send SIGINT if you want to kill')
 
 
 signal.signal(signal.SIGINT, signal_handler)
