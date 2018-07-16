@@ -37,10 +37,9 @@ validpgpkeys=()
 # 	cd "$pkgname-$pkgver"
 # }
 
-# check() {
-# 	cd "$pkgname-$pkgver"
-# 	make -k check
-# }
+check() {
+ echo cac84c43651f061c4c4c7051d5bcb81a86a278112aeea11eaf9bb9cc33f8dce1 xf86keys/xf86keys.py | sha256sum -c - 
+}
 
 package() {
   install -Dm755 "${srcdir}/${pkgname}/xf86keys.py" "${pkgdir}/usr/bin/xf86keys"
