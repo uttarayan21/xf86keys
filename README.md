@@ -1,3 +1,8 @@
+# Dead
+THis was a time killer for me.
+Don't use it !
+It's not that reliable
+
 # xf86keys
 
 ~Script to map media keys to~ this now runs as daemon and maps itself to media keys

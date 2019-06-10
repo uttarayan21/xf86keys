@@ -43,9 +43,9 @@ def log_it(string):
             log.write(readable_timestamp + ' ' + string + '\n')
 
 
-def true():
-    """Always returns true"""
-    return True
+# def true():
+#     """Always returns true"""
+#     return True
 
 
 class XFKeysMpris():
@@ -110,9 +110,9 @@ class XFKeysMpd():
         except mpd.base.ConnectionError:
             log_it('ConnectionError ocurred')
             try:
+                log_it('Trying to disconnect')
                 self.client.disconnect()
             except mpd.base.ConnectionError:
-                log_it('Trying to disconnect')
                 log_it('Disconnect failed')
             try:
                 log_it('Trying to Reconnect')
