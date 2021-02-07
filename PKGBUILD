@@ -1,9 +1,4 @@
-# This is an example PKGBUILD file. Use this as a start to creating your own,
-# and remove these comments. For more information, see 'man PKGBUILD'.
-# NOTE: Please fill out the license field for your package! If it is unknown,
-# then please put 'unknown'.
-
-# Maintainer: Your Name <uttarayan21@gmail.com>
+# Maintainer: Uttarayan Mondal <uttarayan21@gmail.com>
 pkgname=xf86keys
 pkgver=v1.1
 pkgrel=1
@@ -29,20 +24,7 @@ noextract=()
 md5sums=('SKIP')
 validpgpkeys=()
 
-# prepare() {
-# 	cd "$pkgname-$pkgver"
-# }
-
-# build() {
-# 	cd "$pkgname-$pkgver"
-# }
-
-check() {
- echo cac84c43651f061c4c4c7051d5bcb81a86a278112aeea11eaf9bb9cc33f8dce1 xf86keys/xf86keys.py | sha256sum -c - 
-}
-
 package() {
-  install -Dm755 "${srcdir}/${pkgname}/xf86keys.py" "${pkgdir}/usr/bin/xf86keys"
-	install -Dm644 "${srcdir}/${pkgname}/LICENSE" "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
-
+    install -Dm755 "${srcdir}/${pkgname}/xf86keys.py" "${pkgdir}/usr/bin/xf86keys"
+    install -Dm644 "${srcdir}/${pkgname}/LICENSE" "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
 }
