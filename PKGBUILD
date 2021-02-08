@@ -27,9 +27,11 @@ validpgpkeys=()
 package() {
     sitepkg="$(python -c 'from distutils.sysconfig import get_python_lib; print(get_python_lib())')"
     install -Dm755 "${srcdir}/${pkgname}/main.py"   "${pkgdir}/usr/bin/xf86keys"
-    install -Dm755 "${srcdir}/${pkgname}/xf86keys"      "${pkgdir}/${sitepkg}/xf86keys"
+    install -Ddm755 "${srcdir}/${pkgname}/xf86keys"      "${pkgdir}/${sitepkg}/xf86keys"
+    cd "${pkgname}"
     for file in xf86keys/*;do
-        install -Dm644 "${file}"                        "${pkgdir}/${sitepkg}/xf86keys/${file}"
+        echo $file
+        install -Dm644 "${file}"                        "${pkgdir}/${sitepkg}/${file}"
     done
     install -Dm644 "${srcdir}/${pkgname}/LICENSE"       "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
 }
