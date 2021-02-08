@@ -26,6 +26,10 @@ class XFKeysMpris():
         if self.get_player():
             self.get_player().PlayPause()
 
+    def play(self):
+        if self.get_player():
+            self.get_player().Play()
+
     def stop(self):
         """Stop mpris play"""
         if self.get_player():
