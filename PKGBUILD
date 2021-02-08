@@ -1,7 +1,7 @@
 # Maintainer: Uttarayan Mondal <uttarayan21@gmail.com>
 pkgname=xf86keys
-pkgver=v1.1
-pkgrel=1
+pkgver=v1.3
+pkgrel=2
 epoch=
 pkgdesc="keybinds both MPD MPRIS2 music players"
 arch=('any')
@@ -30,7 +30,6 @@ package() {
     install -Ddm755 "${srcdir}/${pkgname}/xf86keys"      "${pkgdir}/${sitepkg}/xf86keys"
     cd "${pkgname}"
     for file in xf86keys/*;do
-        echo $file
         install -Dm644 "${file}"                        "${pkgdir}/${sitepkg}/${file}"
     done
     install -Dm644 "${srcdir}/${pkgname}/LICENSE"       "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
