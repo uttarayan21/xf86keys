@@ -25,6 +25,11 @@ md5sums=('SKIP')
 validpgpkeys=()
 
 package() {
-    install -Dm755 "${srcdir}/${pkgname}/xf86keys.py" "${pkgdir}/usr/bin/xf86keys"
-    install -Dm644 "${srcdir}/${pkgname}/LICENSE" "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+    sitepkg="$(python -c 'from distutils.sysconfig import get_python_lib; print(get_python_lib())')"
+    install -Dm755 "${srcdir}/${pkgname}/main.py"   "${pkgdir}/usr/bin/xf86keys"
+    install -Dm755 "${srcdir}/${pkgname}/xf86keys"      "${pkgdir}/${sitepkg}/xf86keys"
+    for file in xf86keys/*;do
+        install -Dm644 "${file}"                        "${pkgdir}/${sitepkg}/xf86keys/${file}"
+    done
+    install -Dm644 "${srcdir}/${pkgname}/LICENSE"       "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
 }
