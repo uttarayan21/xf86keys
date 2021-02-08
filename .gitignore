@@ -32,7 +32,6 @@ xf86keys*tar.*
 #  before PyInstaller builds the exe, so as to inject date/other infos into it.
 *.manifest
 *.spec
-xf86keys
 
 # Installer logs
 pip-log.txt
