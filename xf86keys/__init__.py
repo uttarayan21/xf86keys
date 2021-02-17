@@ -28,6 +28,8 @@ signal.signal(signal.SIGTERM, sig_handler)
 
 
 def daemonize(mpd_client, mpris_client):
+    key_list = [keyboard.Key.media_play_pause, keyboard.Key.media_next,
+                keyboard.Key.media_previous, keyboard.KeyCode.from_vk(269025045)]
 
     def call_func(call_key):
         """Dictionary to call functions"""
@@ -37,22 +39,26 @@ def daemonize(mpd_client, mpris_client):
         else:
             client = mpris_client
         key_event_map = {
-            keyboard.KeyCode.from_vk(xf86_play): client.toggle,
+            # keyboard.KeyCode.from_vk(xf86_play): client.toggle,
+            keyboard.Key.media_play_pause: client.toggle,
             keyboard.KeyCode.from_vk(xf86_stop): client.stop,
-            keyboard.KeyCode.from_vk(xf86_next): client.next,
-            keyboard.KeyCode.from_vk(xf86_prev): client.prev,
+            # keyboard.KeyCode.from_vk(xf86_next): client.next,
+            keyboard.Key.media_next: client.next,
+            # keyboard.KeyCode.from_vk(xf86_prev): client.prev,
+            keyboard.Key.media_previous: client.prev,
+
         }
         return key_event_map.get(call_key, lambda: True)
 
-    def on_press(key):
+    def handle(key):
         """Call the dictionary on any key press"""
         try:
-            if not key.char:
+            if key in key_list:
                 call_func(key)()
         except AttributeError:
             pass
 
-    with keyboard.Listener(on_press=on_press) as listener:
+    with keyboard.Listener(on_press=handle) as listener:
         listener.join()
 
 
@@ -66,7 +72,7 @@ def main():
     group.add_argument(
         '-d', '--daemon', help="Run as a daemon using pynput to monitor keys", action='store_true')
     group.add_argument("action", choices=[
-        "play", "pause", "toggle", "stop"], nargs='?', help="Play, pause ,toggle or stop the music player")
+        "play", "pause", "toggle", "prev", "next", "stop"], nargs='?', help="Play, pause, toggle, previous, next or stop the music player")
 
     if len(sys.argv) == 1:
         parser.print_help(sys.stderr)

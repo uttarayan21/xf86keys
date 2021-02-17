@@ -13,13 +13,15 @@ class Config:
 
 def read_config(config_path):
     """Read the config file and return mpd host and port"""
-    host = 'localhost'
-    port = 6600
-    timeout = 10
-    idletimeout = None
+    # host = 'localhost'
+    # port = 6600
+    # timeout = 10
+    # idletimeout = None
     config = ConfigParser()
     if not os.path.isfile(config_path):
         log_it('Config couldn\'t be read')
+        log_it('Falling back to default values for them')
+        return Config()
     else:
         config.read(config_path)
     try:
@@ -35,4 +37,4 @@ def read_config(config_path):
     except KeyError:
         log_it('Port couldn\'t be read from config')
 
-    return Config(host, port, timeout, idletimeout)
+    return Config(host, port, timeout=10, idletimeout=None)
