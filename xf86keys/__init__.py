@@ -18,12 +18,10 @@ xf86_next = 269025047
 def sig_handler(signum, _frame):
     """SIgnal Handler"""
     if signum == signal.SIGINT:
-        log_it('\nSIGINT Interrupt recieved...\nExitting...')
         raise SystemExit
-    log_it('\nInterrupted...\nSend SIGINT to kill')
+        log_it('\nRecieved sigterm stopping')
 
 
-signal.signal(signal.SIGINT, sig_handler)
 signal.signal(signal.SIGTERM, sig_handler)
 
 
