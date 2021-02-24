@@ -15,16 +15,6 @@ xf86_prev = 269025046
 xf86_next = 269025047
 
 
-def sig_handler(signum, _frame):
-    """SIgnal Handler"""
-    if signum == signal.SIGINT:
-        raise SystemExit
-        log_it('\nRecieved sigterm stopping')
-
-
-signal.signal(signal.SIGTERM, sig_handler)
-
-
 def daemonize(mpd_client, mpris_client):
     key_list = [keyboard.Key.media_play_pause, keyboard.Key.media_next,
                 keyboard.Key.media_previous, keyboard.KeyCode.from_vk(269025045)]
