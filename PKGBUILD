@@ -1,6 +1,6 @@
 # Maintainer: Uttarayan Mondal <uttarayan21@gmail.com>
 pkgname=xf86keys
-pkgver=v1.4
+pkgver=v1.5
 pkgrel=3
 epoch=
 pkgdesc="keybinds both MPD MPRIS2 music players"
