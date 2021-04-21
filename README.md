@@ -1,5 +1,9 @@
 # xf86keys
 
+Same tool written in rust [mctl](https://github.com/uttarayan21/mctl-rs).  
+I hope to add more features to it.
+This will not recieve any more updates.
+
 [python-mpd2](https://pypi.org/project/python-mpd2) is used for controlling [mpd](https://www.musicpd.org)  
 [python-dbus](https://pypi.org/project/dbus-python) is used for controlling mpris  
 [python-pynput](https://pypi.org/project/pynput) is used to monitor keystrokes
